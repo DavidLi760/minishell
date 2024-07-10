@@ -1,29 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signal_handler.c                                   :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edecorce <edecorce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: davli <davli@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/29 11:18:51 by edecorce          #+#    #+#             */
-/*   Updated: 2024/07/04 14:18:56 by edecorce         ###   ########.fr       */
+/*   Created: 2024/07/10 12:45:51 by davli             #+#    #+#             */
+/*   Updated: 2024/07/10 12:55:12 by davli            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../main/minishell.h"
+#include "minishell.h"
 
-void	sigint_handler(int signum)
+int	main()
 {
-	if (signum == SIGINT)
+	char	*input;
+
+	while (1)
 	{
-		write(1, "\n", 1);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
+		input = readline("minishell$> ");
+		add_history(input);
+		if (strcmp(input, "exit") == 0)
+		{
+			free(input);
+			printf("exit\n");
+			break;
+		}
 	}
-	else if (signum == SIGQUIT)
-	{
-		write(2, "exit\n", 5);
-		exit(0);
-	}
+	return (0);
 }

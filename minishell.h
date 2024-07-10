@@ -1,26 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_env.c                                           :+:      :+:    :+:   */
+/*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edecorce <edecorce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: davli <davli@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/05 12:11:40 by edecorce          #+#    #+#             */
-/*   Updated: 2024/07/05 12:12:08 by edecorce         ###   ########.fr       */
+/*   Created: 2024/07/10 12:48:41 by davli             #+#    #+#             */
+/*   Updated: 2024/07/10 12:54:08 by davli            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../main/minishell.h"
+#ifndef MINISHELL_H
+# define MINISHELL_H
 
-void	ft_env(void)
-{
-	extern char	**environ;
-	int			i;
+# include <stdio.h>
+# include <stdlib.h>
+# include <unistd.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 
-	i = 0;
-	while (environ[i])
-	{
-		printf("%s\n", environ[i]);
-		i++;
-	}
-}
+#endif
