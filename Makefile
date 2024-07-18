@@ -1,7 +1,7 @@
 NAME	= minishell
 CC		= cc
 CFLAGS	= -Wall -Wextra -Werror -g3
-LFLAGS	= -lreadline
+LFLAGS	= -lreadline -lwaitpid
 SRCS	=	main.c
 OBJS	= $(SRCS:.c=.o)
 
