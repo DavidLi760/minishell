@@ -5,98 +5,255 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: davli <davli@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/11 18:46:38 by davli             #+#    #+#             */
-/*   Updated: 2024/08/18 18:45:03 by davli            ###   ########.fr       */
+/*   Created: 2024/08/20 19:18:35 by davli             #+#    #+#             */
+/*   Updated: 2024/08/20 19:55:13 by davli            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	skip_char(char *str, int i)
+pid_t	g_signal;
+
+void	handle_sigint(int signum)
 {
-	while (str[i] == ' '
-		|| (str[i] == '\'' && str[i + 1] == '\'')
-		|| (str[i] == '"' && str[i + 1] == '"'))
-	{
-		while (str[i] == ' ')
-			i++;
-		while (str[i] == '\'' && str[i + 1] == '\'')
-			i += 2;
-		while (str[i] == '"' && str[i + 1] == '"')
-			i += 2;
-	}
-	return (i);
+	(void) signum;
+	printf("\n");
+	rl_replace_line("", 0);
+	rl_on_new_line();
+	if (g_signal == 0)
+		rl_redisplay();
 }
 
-int	count_token(char *str)
+void	handle_sigsegv(int signum)
 {
-	int	i;
-	int	count;
+	(void) signum;
+	write(2, "Segmentation fault\n", 19);
+	exit(11);
+}
+
+void	handle_sigabrt(int signum)
+{
+	(void) signum;
+	write(1, "abort\n", 6);
+}
+
+void	handle_sigquit(int signum)
+{
+	(void) signum;
+}
+
+void	handle_signals(void)
+{
+	signal(SIGINT, &handle_sigint);
+	signal(SIGSEGV, &handle_sigsegv);
+	signal(SIGABRT, &handle_sigabrt);
+	signal(SIGQUIT, &handle_sigquit);
+}
+
+int	count_token(char *str, t_var *var)
+{
+	int		i;
+	int		j;
+	int		count;
 
 	i = 0;
 	count = 0;
 	while (str[i])
 	{
-		i = skip_char(str, i);
-		while (str[i] != ' ' && str[i])
+		while (str[i] == ' ')
+			i++;
+		while (str[i] != ' ' && str[i] != '>' && str[i] != '<' && str[i] != '|' && str[i])
 		{
-			i = skip_char(str, i);
 			if (str[i] == '\'')
 			{
+				var->squote = 1;
 				i++;
-				while (str[i] != '\'' && str[i])
-					i++;
 			}
 			if (str[i] == '"')
 			{
+				var->dquote = 1;
 				i++;
-				while (str[i] != '"' && str[i])
-					i++;
 			}
-			while (str[i] != '\'' && str[i] != '"' && str[i] != ' ' && str[i])
+			while ((var->squote == 1 || var->dquote == 1) && str[i])
 			{
+				if (str[i] == '\'' && var->squote == 1)
+					var->squote = 0;
+				if (str[i] == '"' && var->dquote == 1)
+					var->dquote = 0;
 				i++;
-				if (str[i] == '>' || str[i] == '<' || (str[i] == '>' && str[i + 1] == '>')
-					|| (str[i] == '<' && str[i + 1] == '<'))
-					count++;
 			}
+			i++;
+			var->word = 1;
 		}
-		count++;
-		if (str[i] == '\0' && str[i - 1] == ' ')
-			count--;
+		if (var->word == 1)
+		{
+			var->word = 0;
+			count++;
+		}
+		if (str[i] == '|')
+		{
+			count++;
+			i++;
+		}
+		else if (str[i] == '<')
+		{
+			count++;
+			i++;
+			j = 0;
+			while (str[i] == '<' && j++ < 3)
+				i++;
+		}
+		else if (str[i] == '>')
+		{
+			count++;
+			i++;
+			if (str[i] == '>')
+				i++;
+		}
 	}
 	return (count);
 }
-/*
-char	**ft_strtok(char *str)
+
+char	**ft_strtok(char *str, t_var *var)
 {
 	int		i;
+	int		j;
+	int		k;
+	int		l;
 	char	**tokens;
 
 	i = 0;
-
-	return ();
+	k = 0;
+	tokens = malloc(sizeof(char *) * count_token(str, var) + 1);
+	while (str[i])
+	{
+		j = 0;
+		l = 0;
+		while (str[i] == ' ')
+			i++;
+		while (str[i] != ' ' && str[i] != '>' && str[i] != '<' && str[i] != '|' && str[i])
+		{
+			if (str[i] == '\'')
+			{
+				var->squote = 1;
+				i++;
+				j++;
+			}
+			if (str[i] == '"')
+			{
+				var->dquote = 1;
+				i++;
+				j++;
+			}
+			while ((var->squote == 1 || var->dquote == 1) && str[i])
+			{
+				if (str[i] == '\'' && var->squote == 1)
+					var->squote = 0;
+				if (str[i] == '"' && var->dquote == 1)
+					var->dquote = 0;
+				i++;
+				j++;
+			}
+			i++;
+			j++;
+		}
+		if (j > 0)
+			tokens[k] = malloc(sizeof(char) * (j + 1));
+		while (l < j)
+		{
+			tokens[k][l] = str[i - j + l];
+			l++;
+		}
+		if (j > 0)
+		{
+			tokens[k][l] = 0;
+			k++;
+		}
+		if (str[i] == '|')
+		{
+			tokens[k] = malloc(sizeof(char) * 2);
+			tokens[k][0] = '|';
+			i++;
+			tokens[k][1] = 0;
+			k++;
+		}
+		else if (str[i] == '<')
+		{
+			l = 0;
+			tokens[k] = malloc(sizeof(char) * 5);
+			tokens[k][l++] = str[i];
+			i++;
+			while (str[i] == '<' && l < 4)
+				tokens[k][l++] = str[i++];
+			tokens[k][l] = 0;
+			k++;
+		}
+		else if (str[i] == '>')
+		{
+			l = 0;
+			tokens[k] = malloc(sizeof(char) * 3);
+			tokens[k][l++] = str[i];
+			i++;
+			if (str[i] == '>')
+				tokens[k][l++] = str[i++];
+			tokens[k][l] = 0;
+			k++;
+		}
+		else if (str[i] == ' ')
+			while (str[i] == ' ')
+				i++;
+	}
+	return (tokens);
 }
-*/
+
+int	init_var(t_var *var)
+{
+	var->squote = 0;
+	var->dquote = 0;
+	var->word = 0;
+	handle_signals();
+	return (0);
+}
 
 int	main(void)
 {
 	t_var	var;
 	int		i;
-	//	char	**tokens;
+	char	**tokens;
 	int		count;
 
+	tokens = 0;
+	if (!getenv("PATH"))
+		return (0);
 	while (1)
 	{
 		i = 0;
+		init_var(&var);
 		var.input = readline("minishell$> ");
-//		var.input = "asd asd sd sd sd ";
+		//		var.input = "<<<<<<<< ";
 		if (!var.input)
 			break ;
-		count = count_token(var.input);
-		printf("%d\n", count);
-		add_history(var.input);	
+		tokens = ft_strtok(var.input, &var);
+		if (!tokens)
+			free(var.input);
+		count = count_token(var.input, &var);
+		while (i < count)
+		{
+			printf("%s", tokens[i++]);
+			printf(" %d\n", count);
+		}
+		add_history(var.input);
+		i = 0;
 		if (var.input[i] == ':')
+		{	
+			while (i < count_token(var.input, &var))
+				free(tokens[i++]);
+			free(tokens);
 			break ;
+		}
+		while (i < count_token(var.input, &var))
+			free(tokens[i++]);
+		free(tokens);
 	}
+	return (0);
 }
