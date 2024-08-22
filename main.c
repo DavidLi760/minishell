@@ -6,7 +6,7 @@
 /*   By: davli <davli@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 19:18:35 by davli             #+#    #+#             */
-/*   Updated: 2024/08/20 19:55:13 by davli            ###   ########.fr       */
+/*   Updated: 2024/08/22 19:33:52 by davli            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,8 @@ int	count_token(char *str, t_var *var)
 					var->dquote = 0;
 				i++;
 			}
-			i++;
+			if (str[i] != ' ' && str[i] != '>' && str[i] != '<' && str[i] != '|' && str[i])
+				i++;
 			var->word = 1;
 		}
 		if (var->word == 1)
@@ -114,7 +115,7 @@ int	count_token(char *str, t_var *var)
 	return (count);
 }
 
-char	**ft_strtok(char *str, t_var *var)
+char	**tokenizer(char *str, t_var *var)
 {
 	int		i;
 	int		j;
@@ -154,8 +155,11 @@ char	**ft_strtok(char *str, t_var *var)
 				i++;
 				j++;
 			}
-			i++;
-			j++;
+			if (str[i] != ' ' && str[i] != '>' && str[i] != '<' && str[i] != '|' && str[i])
+			{
+				i++;
+				j++;
+			}
 		}
 		if (j > 0)
 			tokens[k] = malloc(sizeof(char) * (j + 1));
@@ -180,10 +184,10 @@ char	**ft_strtok(char *str, t_var *var)
 		else if (str[i] == '<')
 		{
 			l = 0;
-			tokens[k] = malloc(sizeof(char) * 5);
+			tokens[k] = malloc(sizeof(char) * 3);
 			tokens[k][l++] = str[i];
 			i++;
-			while (str[i] == '<' && l < 4)
+			while (str[i] == '<')
 				tokens[k][l++] = str[i++];
 			tokens[k][l] = 0;
 			k++;
@@ -206,22 +210,85 @@ char	**ft_strtok(char *str, t_var *var)
 	return (tokens);
 }
 
+// void    ft_lstadd_front(t_list **lst, t_list *new)
+// {
+//     *lst = new;
+//     new->next = *lst;
+//     new->prev = *lst;
+// }
+
+// int	ft_lstnew(t_list **new, char *elem)
+// {
+// 	(*new) = malloc(sizeof(t_list));
+// 	if (*new == NULL)
+// 		return (0);
+// 	(*new)->str = elem;
+// 	(*new)->next = NULL;
+// 	(*new)->prev = NULL;
+// 	return (1);
+// }
+
+// void	append(t_list **list, char elem)
+// {
+// 	t_list	*new;
+
+// 	if (!ft_lstnew(&new, elem))
+// 		return (0);
+// 	if (!(*list))
+// 		ft_lstaddfront(list, new);
+// 	else
+// 	{
+// 		new->prev = (*list)->prev;
+// 		new->next = (*list);
+// 		(*list)->prev->next = new;
+// 		(*list)->prev = new;
+// 	}
+// 	return (1);
+// }
+
+// void	add_env(t_list **list, char *env_var)
+// {
+// 	char	*temp;
+
+// 	temp = ft_strdup(env_var);
+// 	if (!temp || !append(list, temp))
+// 		free_list(list);
+// }
+
+// void	recup_env(t_var *var, char **env)
+// {
+// 	t_list	*list;
+// 	int		i;
+
+// 	list = NULL;
+// 	i = 0;
+// 	while (env[i])
+// 	{
+// 		add_env(&list ,env[i]);
+// 		i++;
+// 	}
+// 	var->env = list;
+// }
+
 int	init_var(t_var *var)
 {
 	var->squote = 0;
 	var->dquote = 0;
 	var->word = 0;
 	handle_signals();
+	// recup_env(var, env);
 	return (0);
 }
 
-int	main(void)
+int	main(int argc, char **argv)
 {
 	t_var	var;
 	int		i;
 	char	**tokens;
 	int		count;
 
+	(void)argc;
+	(void)argv;
 	tokens = 0;
 	if (!getenv("PATH"))
 		return (0);
@@ -230,10 +297,9 @@ int	main(void)
 		i = 0;
 		init_var(&var);
 		var.input = readline("minishell$> ");
-		//		var.input = "<<<<<<<< ";
 		if (!var.input)
 			break ;
-		tokens = ft_strtok(var.input, &var);
+		tokens = tokenizer(var.input, &var);
 		if (!tokens)
 			free(var.input);
 		count = count_token(var.input, &var);

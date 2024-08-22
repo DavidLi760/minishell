@@ -6,7 +6,7 @@
 /*   By: davli <davli@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:46:45 by davli             #+#    #+#             */
-/*   Updated: 2024/08/20 19:45:40 by davli            ###   ########.fr       */
+/*   Updated: 2024/08/21 16:06:14 by davli            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,20 @@
 
 extern pid_t	g_signal;
 
+typedef struct s_list
+{
+	char			*str;
+	struct s_list	*prev;
+	struct s_list	*next;
+}	t_list;
+
 typedef struct s_var
 {
 	char	*input;
 	int		squote;
 	int		dquote;
 	int		word;
+	t_list	*env;
 }	t_var;
 
 char	**ft_split(char const *str, char c);
