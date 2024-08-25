@@ -24,7 +24,7 @@ int	count_token(char *str, t_var *var)
 	{
 		while (str[i] == ' ')
 			i++;
-		while (str[i] != ' ' && str[i] != '>' && str[i] != '<' && str[i] != '|' && str[i])
+		while (str[i] != ' ' && str[i] != '>' && str[i] != '<' && str[i] != '|' && str[i] != '&' && str[i])
 		{
 			if (str[i] == '\'')
 			{
@@ -57,6 +57,8 @@ int	count_token(char *str, t_var *var)
 		{
 			count++;
 			i++;
+			if (str[i] == '|')
+				i++;
 		}
 		else if (str[i] == '<')
 		{
@@ -65,6 +67,11 @@ int	count_token(char *str, t_var *var)
 			j = 0;
 			while (str[i] == '<' && j++ < 3)
 				i++;
+		}
+		else if (str[i] == '&' && str[i + 1] == '&')
+		{
+			count++;
+			i += 2;
 		}
 		else if (str[i] == '>')
 		{
@@ -94,7 +101,7 @@ char	**tokenizer(char *str, t_var *var)
 		l = 0;
 		while (str[i] == ' ')
 			i++;
-		while (str[i] != ' ' && str[i] != '>' && str[i] != '<' && str[i] != '|' && str[i])
+		while (str[i] != ' ' && str[i] != '>' && str[i] != '<' && str[i] != '&' && str[i] != '|' && str[i])
 		{
 			if (str[i] == '\'')
 			{
@@ -137,10 +144,15 @@ char	**tokenizer(char *str, t_var *var)
 		}
 		if (str[i] == '|')
 		{
-			tokens[k] = malloc(sizeof(char) * 2);
+			tokens[k] = malloc(sizeof(char) * 3);
 			tokens[k][0] = '|';
 			i++;
-			tokens[k][1] = 0;
+			if (str[i] == '|')
+			{
+				tokens[k][1] = '|';
+				i++;
+			}
+			tokens[k][2] = 0;
 			k++;
 		}
 		else if (str[i] == '<')
@@ -152,6 +164,15 @@ char	**tokenizer(char *str, t_var *var)
 			while (str[i] == '<')
 				tokens[k][l++] = str[i++];
 			tokens[k][l] = 0;
+			k++;
+		}
+		else if (str[i] == '&' && str[i + 1] == '&')
+		{
+			tokens[k] = malloc(sizeof(char) * 3);
+			tokens[k][0] = '&';
+			i += 2;
+			tokens[k][1] = '&';
+			tokens[k][2] = 0;
 			k++;
 		}
 		else if (str[i] == '>')
