@@ -1,27 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test.c                                             :+:      :+:    :+:   */
+/*   ft_env.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: davli <davli@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/21 16:00:58 by davli             #+#    #+#             */
-/*   Updated: 2024/08/21 16:01:19 by davli            ###   ########.fr       */
+/*   Created: 2024/08/25 15:29:32 by davli             #+#    #+#             */
+/*   Updated: 2024/08/25 15:29:39 by davli            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	ft_execve(char *path, char **arg)
+int ft_env(t_var *var)
 {
-    execve(path, arg, 0);
-    return (0);
-}
+    t_list  *temp;
 
-int main(int argc, char **argv)
-{
-    (void)argc;
-    argv[0] = "ls";
-    argv[1] = 0;
-    ft_execve("/bin/pwd", argv);
+    printf("%s\n", var->env->str);
+    temp = var->env->next;
+    while (temp != var->env)
+    {
+        if (temp->is_unset == 0)
+            printf("%s\n", temp->str);
+        temp = temp->next;
+    }
+    return (0);
 }
