@@ -73,8 +73,7 @@ int	execute_cmd(t_var *var)
 		free_list(&var->env);
 		exit (0);
 	}
-	else if (g_signal > 0)
-		wait(0);
+	wait(0);
 	i = 0;
 	while (var->path[i])
 		free(var->path[i++]);
@@ -98,8 +97,8 @@ int	is_builtin(char *str, t_var *var)
 		return (ft_env(var));
 	// if (ft_strcmp(str, "exit"))
 	// 	return (ft_exit());
-	// else
-	// 	return (execute_cmd(var));
+	else
+		return (execute_cmd(var));
 	return (0);
 }
 

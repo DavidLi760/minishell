@@ -111,23 +111,23 @@ int	minishell(t_var *var, char **env)
 
 	while (1)
 	{
-		i = 0;
 		var->input = readline("minishell$> ");
 		// var->input = " echo -n  this >file| &|cd invalid";
 		if (!var->input)
 			break ;
+		init_var(var, env);
 		if (!(*var->input))
 			continue ;
-		init_var(var, env);
+		add_history(var->input);
+		executer(var);
+		i = 0;
 		while (i < var->count)
 		{
 			printf("%d[", i + 1);
 			printf("%s] ", var->tokens[i++]);
 		}
-		add_history(var->input);
-		executer(var);
-		printf("\n");
 		i = 0;
+		printf("\n");
 		if (var->input[i] == ':')
 		{	
 			while (i < count_token(var->input, var))
