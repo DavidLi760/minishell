@@ -194,3 +194,36 @@ char	**tokenizer(char *str, t_var *var)
 	tokens[k] = 0;
 	return (tokens);
 }
+
+char	**transformers(t_var *var)
+{
+	char	**new;
+	int		i;
+	int		j;
+	int		len;
+
+	while (var->tokens[i])
+		i++;
+	len = i + 1;
+	new = malloc(sizeof(char *) * i + 1);
+	if (!new)
+		return (0);
+	j = 0;
+	while (--len > 0)
+	{
+		while (var->tokens[j])
+			j++;
+		new[i++] = malloc(sizeof(char) * j + 1);
+	}
+	i = 0;
+	while (var->tokens[i])
+	{
+		j = 0;
+		while (var->tokens[i][j])
+		{
+			if (var->tokens[i][j] == '"')
+				var->dquote = 1;
+				new[i][j] = tokens[i][j++];
+		}
+	}
+}

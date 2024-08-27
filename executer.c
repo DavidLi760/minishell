@@ -73,7 +73,8 @@ int	execute_cmd(t_var *var)
 		free_list(&var->env);
 		exit (0);
 	}
-	wait(0);
+	if (g_signal > 0)
+		wait(0);
 	i = 0;
 	while (var->path[i])
 		free(var->path[i++]);

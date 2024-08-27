@@ -100,6 +100,7 @@ int	init_var(t_var *var, char **env)
 	var->tokens = tokenizer(var->input, var);
 	if (!var->tokens)
 		free(var->input);
+	var->tokens = transformers(var);
 	var->count = count_token(var->input, var);
 	recup_env(var, env);
 	return (0);

@@ -44,6 +44,7 @@ typedef struct s_var
 	char	*temp_path;
 	char	**path;
 	char	**argv;
+	int		pipes[2];
 	int		found;
 	t_list	*env;
 }	t_var;
