@@ -6,7 +6,7 @@
 /*   By: davli <davli@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 19:18:35 by davli             #+#    #+#             */
-/*   Updated: 2024/08/25 15:46:32 by davli            ###   ########.fr       */
+/*   Updated: 2024/08/27 16:13:19 by davli            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,6 @@ int	init_var(t_var *var, char **env)
 	if (!var->tokens)
 		free(var->input);
 	var->count = count_token(var->input, var);
-	handle_signals();
 	recup_env(var, env);
 	return (0);
 }
@@ -114,7 +113,7 @@ int	minishell(t_var *var, char **env)
 	{
 		i = 0;
 		var->input = readline("minishell$> ");
-		// var->input = " ls";
+		// var->input = " echo -n  this >file| &|cd invalid";
 		if (!var->input)
 			break ;
 		if (!(*var->input))
@@ -125,10 +124,10 @@ int	minishell(t_var *var, char **env)
 			printf("%d[", i + 1);
 			printf("%s] ", var->tokens[i++]);
 		}
-		printf("\n");
 		add_history(var->input);
-		i = 0;
 		executer(var);
+		printf("\n");
+		i = 0;
 		if (var->input[i] == ':')
 		{	
 			while (i < count_token(var->input, var))
@@ -154,8 +153,11 @@ int	main(int argc, char **argv, char **env)
 	var.found = 0;
 	if (!getenv("PATH"))
 		return (0);
+	handle_signals();
 	minishell(&var, env);
-	free(var.path);
-	free(var.temp_path);
+	// free(var.path);
+	// free(var.temp_path);
+	free(var.input);
+	rl_clear_history();
 	return (0);
 }

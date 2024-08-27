@@ -37,7 +37,6 @@ int	execute_cmd(t_var *var)
 {
 	t_list	*temp;
 	int		i;
-	pid_t	pid;
 
 	i = 0;
 	temp = var->env->next;
@@ -48,8 +47,11 @@ int	execute_cmd(t_var *var)
 		temp = temp->next;
 	}
 	var->path = ft_split(var->temp_path, ':');
-	pid = fork();
-	if (pid == 0)
+	free(var->temp_path);
+	g_signal = fork();
+	if (g_signal == -1)
+		return (0);
+	if (g_signal == 0)
 	{
 		while (var->path[i] && !var->found)
 		{
@@ -58,12 +60,25 @@ int	execute_cmd(t_var *var)
 			i++;
 			if (execve(var->temp_path, var->tokens, 0) == -1)
 				var->found = 0;
+			free(var->temp_path);
 		}
-		wait(0);
+		i = 0;
+		while (var->path[i])
+			free(var->path[i++]);
+		free(var->path);
+		i = 0;
+		while (i < count_token(var->input, var))
+			free(var->tokens[i++]);
+		free(var->tokens);
+		free_list(&var->env);
+		exit (0);
 	}
-	i = 0;
-	while (i++ < 2)
+	else if (g_signal > 0)
 		wait(0);
+	i = 0;
+	while (var->path[i])
+		free(var->path[i++]);
+	free(var->path);
 	return (0);
 }
 
@@ -83,8 +98,8 @@ int	is_builtin(char *str, t_var *var)
 		return (ft_env(var));
 	// if (ft_strcmp(str, "exit"))
 	// 	return (ft_exit());
-	else
-		return (execute_cmd(var));
+	// else
+	// 	return (execute_cmd(var));
 	return (0);
 }
 

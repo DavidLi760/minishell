@@ -38,6 +38,10 @@ void	handle_sigabrt(int signum)
 void	handle_sigquit(int signum)
 {
 	(void) signum;
+	if (g_signal != 0)
+	{
+		write(1, "Quit (core dumped)\n", 19);
+	}
 }
 
 void	handle_signals(void)
