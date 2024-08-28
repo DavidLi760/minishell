@@ -1,5 +1,5 @@
 NAME	= minishell
-CC		= cc
+CC	= cc
 CFLAGS	= -Wall -Wextra -Werror -g3
 LFLAGS	= -lreadline
 SRC		= main.c\

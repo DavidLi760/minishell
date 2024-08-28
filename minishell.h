@@ -28,6 +28,8 @@ extern pid_t	g_signal;
 typedef struct s_list
 {
 	char			*str;
+	char			*name;
+	char			*value;
 	int				is_unset;
 	struct s_list	*prev;
 	struct s_list	*next;
@@ -36,6 +38,7 @@ typedef struct s_list
 typedef struct s_var
 {
 	char	*input;
+	int		dollar;
 	int		squote;
 	int		dquote;
 	int		word;
@@ -61,5 +64,7 @@ int		ft_strcmp(char *s1, char *s2);
 int		ft_strlen(char *str);
 int		ft_strisin(char *s1, char *s2);
 char	*ft_strdup(const char *src);
+int		is_alnum(char c);
+int		cmp_char(char c1, char c2);
 
 #endif

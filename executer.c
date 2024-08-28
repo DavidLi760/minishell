@@ -58,7 +58,7 @@ int	execute_cmd(t_var *var)
 			var->found = 1;
 			var->temp_path = ft_strjoin(var->path[i], var->tokens[0]);
 			i++;
-			if (execve(var->temp_path, var->tokens, 0) == -1)
+			if (execve(var->temp_path, var->tokens, var->argv) == -1)
 				var->found = 0;
 			free(var->temp_path);
 		}

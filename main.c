@@ -96,11 +96,12 @@ int	init_var(t_var *var, char **env)
 {
 	var->squote = 0;
 	var->dquote = 0;
+	var->dollar = 0;
 	var->word = 0;
 	var->tokens = tokenizer(var->input, var);
 	if (!var->tokens)
 		free(var->input);
-	var->tokens = transformers(var);
+	// var->tokens = transformers(var);
 	var->count = count_token(var->input, var);
 	recup_env(var, env);
 	return (0);
@@ -150,7 +151,8 @@ int	main(int argc, char **argv, char **env)
 	t_var	var;
 
 	(void)argc;
-	var.argv = argv;
+	(void)argv;
+	var.argv = env;
 	var.found = 0;
 	if (!getenv("PATH"))
 		return (0);

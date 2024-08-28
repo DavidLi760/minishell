@@ -48,6 +48,36 @@ int	ft_strisin(char *s1, char *s2)
 	return (1);
 }
 
+char	*env_value(t_var *var, char *str)
+{
+	t_list	*temp;
+	int		i;
+
+	i = 0;
+	temp = var->env->next;
+	while (temp != var->env)
+	{
+		if (!ft_strisin(temp->str, str))
+			var->temp_path = ft_strdup(temp->str + ft_strlen(str));
+		temp = temp->next;
+	}
+	return (var->temp_path);
+}
+
+int	cmp_char(char c1, char c2)
+{
+	if (c1 == c2)
+		return (1);
+	return (0);
+}
+
+int	is_alnum(char c)
+{
+	if ((c >= 'a' && c <= 'z') && (c >= 'A' && c <= 'Z') && (c >= '0' && c <= '9'))
+		return (1);
+	return (0);
+}
+
 int	free_list(t_list **list)
 {
 	t_list	*temp;

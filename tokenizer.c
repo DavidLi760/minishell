@@ -195,35 +195,56 @@ char	**tokenizer(char *str, t_var *var)
 	return (tokens);
 }
 
-char	**transformers(t_var *var)
-{
-	char	**new;
-	int		i;
-	int		j;
-	int		len;
+// char	**transformers(t_var *var)
+// {
+// 	char	**new;
+// 	char	**temp;
+// 	int		i;
+// 	int		j;
+// 	int		len;
 
-	while (var->tokens[i])
-		i++;
-	len = i + 1;
-	new = malloc(sizeof(char *) * i + 1);
-	if (!new)
-		return (0);
-	j = 0;
-	while (--len > 0)
-	{
-		while (var->tokens[j])
-			j++;
-		new[i++] = malloc(sizeof(char) * j + 1);
-	}
-	i = 0;
-	while (var->tokens[i])
-	{
-		j = 0;
-		while (var->tokens[i][j])
-		{
-			if (var->tokens[i][j] == '"')
-				var->dquote = 1;
-				new[i][j] = tokens[i][j++];
-		}
-	}
-}
+// 	while (var->tokens[i])
+// 		i++;
+// 	len = i + 1;
+// 	new = malloc(sizeof(char *) * (i + 1));
+// 	if (!new)
+// 		return (0);
+// 	temp = malloc(sizeof(char *) * (i + 1));
+// 	if (!temp)
+// 		return (0);
+// 	j = 0;
+// 	while (--len > 0)
+// 	{
+// 		while (var->tokens[j])
+// 			j++;
+// 		temp[i] = malloc(sizeof(char) * j + 100);
+// 		new[i++] = malloc(sizeof(char) * j + 1);
+// 	}
+// 	i = 0;
+// 	while (var->tokens[i])
+// 	{
+// 		j = 0;
+// 		while (var->tokens[i][j])
+// 		{
+// 			if (var->tokens[i][j] == '\'')
+// 			{
+// 				var->squote = 1;
+// 				j++;
+// 			}
+// 			else if (var->tokens[i][j] == '"')
+// 			{
+// 				var->dquote = 1;
+// 				j++;
+// 			}
+// 			while (var->tokens[i][j] && var->dquote)
+// 			{
+// 				if (var->tokens[i][j] == '$')
+// 					var->dollar = 1;
+// 				while (is_alnum(var->tokens[i][j]))
+// 					temp[i][j] = var->tokens[i][j++];
+// 				env_value(var, "$")
+// 			}
+// 				new[i][j] = var->tokens[i][j++];
+// 		}
+// 	}
+// }
