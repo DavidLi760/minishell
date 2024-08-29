@@ -48,22 +48,6 @@ int	ft_strisin(char *s1, char *s2)
 	return (1);
 }
 
-char	*env_value(t_var *var, char *str)
-{
-	t_list	*temp;
-	int		i;
-
-	i = 0;
-	temp = var->env->next;
-	while (temp != var->env)
-	{
-		if (!ft_strisin(temp->str, str))
-			var->temp_path = ft_strdup(temp->str + ft_strlen(str));
-		temp = temp->next;
-	}
-	return (var->temp_path);
-}
-
 int	cmp_char(char c1, char c2)
 {
 	if (c1 == c2)
@@ -91,9 +75,13 @@ int	free_list(t_list **list)
 		temp = current;
 		current = current->next;
 		free(temp->str);
+		free(temp->name);
+		free(temp->value);
 		free(temp);
 	}
 	free(current->str);
+	free(current->name);
+	free(current->value);
 	free(current);
 	*list = NULL;
 	return (0);

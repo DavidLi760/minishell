@@ -21,12 +21,55 @@ void    ft_lstaddfront(t_list **lst, t_list *new)
     new->prev = *lst;
 }
 
+int	ft_lstnew_helper(t_list **new, int code)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	if (code == 1)
+		while ((*new)->str[i] != '=')
+			i++;
+	else if (code == 2)
+	{
+		while ((*new)->str[j] != '=')
+			j++;
+		while ((*new)->str[i + j])
+			i++;
+	}
+	return (i);
+	
+}
+
 int	ft_lstnew(t_list **new, char *elem)
 {
+	int	i;
+	int	len;
+	int	len2;
+
+	i = 0;
 	(*new) = malloc(sizeof(t_list));
 	if (*new == NULL)
 		return (0);
 	(*new)->str = elem;
+	len = ft_lstnew_helper(new, 1) + 1;
+	(*new)->name = malloc(len);
+	while ((*new)->str[i] != '=')
+	{
+		(*new)->name[i] = (*new)->str[i];
+		i++;
+	}
+	(*new)->name[i] = 0;
+	len2 = ft_lstnew_helper(new, 2);
+	(*new)->value = malloc(len2 + 1);
+	i = 0;
+	while ((*new)->str[i + len])
+	{
+		(*new)->value[i] = (*new)->str[len + i];
+		i++;
+	}
+	(*new)->value[i] = 0;
 	(*new)->next = NULL;
 	(*new)->prev = NULL;
 	return (1);
@@ -98,6 +141,7 @@ int	init_var(t_var *var, char **env)
 	var->dquote = 0;
 	var->dollar = 0;
 	var->word = 0;
+	var->temp = 0;
 	var->tokens = tokenizer(var->input, var);
 	if (!var->tokens)
 		free(var->input);
@@ -110,6 +154,7 @@ int	init_var(t_var *var, char **env)
 int	minishell(t_var *var, char **env)
 {
 	int		i;
+	t_list	*temp;
 
 	while (1)
 	{
@@ -129,6 +174,13 @@ int	minishell(t_var *var, char **env)
 			printf("%s] ", var->tokens[i++]);
 		}
 		i = 0;
+		temp = var->env;
+		while (ft_strcmp(temp->name, "USER"))
+			temp = temp->next;
+
+		printf("%s\n", temp->str);
+		printf("%s\n", temp->name);
+		printf("%s\n", temp->value);
 		printf("\n");
 		if (var->input[i] == ':')
 		{	

@@ -38,6 +38,7 @@ typedef struct s_list
 typedef struct s_var
 {
 	char	*input;
+	char	*temp;
 	int		dollar;
 	int		squote;
 	int		dquote;
@@ -54,6 +55,7 @@ typedef struct s_var
 
 char	**ft_split(char const *str, char c);
 char	**tokenizer(char *str, t_var *var);
+char	**transformers(t_var *var);
 int		count_token(char *str, t_var *var);
 void	handle_signals(void);
 int		free_list(t_list **list);
